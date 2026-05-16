@@ -1,5 +1,6 @@
 package com.example.booking.ui;
 
+import com.example.base.ui.MainLayout;
 import com.example.booking.Booking;
 import com.example.booking.BookingService;
 import com.vaadin.flow.component.button.Button;
@@ -11,58 +12,62 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-@Route("booking")
-@PageTitle("Photography Booking")
-public class BookingView extends VerticalLayout {
-
+@Route(value = "booking", layout = MainLayout.class)
+@PageTitle("Buchungen")
+public class BookingView extends VerticalLayout
+{
     private final BookingService service;
     private final Grid<Booking> grid = new Grid<>(Booking.class, false);
 
-    private final TextField customerName = new TextField("Customer Name");
-    private final TextField photographer = new TextField("Photographer");
-    private final TextField location = new TextField("Location");
-    private final DatePicker bookingDate = new DatePicker("Booking Date");
-    private final Button saveBtn = new Button("Save");
+    private final TextField kundenname = new TextField("Kundenname");
+    private final TextField fotograf = new TextField("Fotograf");
+    private final TextField ort = new TextField("Ort");
+    private final DatePicker buchungsdatum = new DatePicker("Buchungsdatum");
+    private final Button speichernButton = new Button("Speichern");
 
-    public BookingView(BookingService service) {
+    public BookingView(BookingService service)
+    {
         this.service = service;
 
-        grid.addColumn(Booking::getCustomerName).setHeader("Customer");
-        grid.addColumn(Booking::getPhotographer).setHeader("Photographer");
-        grid.addColumn(Booking::getLocation).setHeader("Location");
-        grid.addColumn(Booking::getBookingDate).setHeader("Date");
+        grid.addColumn(Booking::getCustomerName).setHeader("Kunde");
+        grid.addColumn(Booking::getPhotographer).setHeader("Fotograf");
+        grid.addColumn(Booking::getLocation).setHeader("Ort");
+        grid.addColumn(Booking::getBookingDate).setHeader("Datum");
         grid.addColumn(Booking::getStatus).setHeader("Status");
 
-        saveBtn.addClickListener(e -> saveBooking());
+        speichernButton.addClickListener(e -> speichereBuchung());
 
-        HorizontalLayout form = new HorizontalLayout(
-                customerName, photographer, location, bookingDate, saveBtn
+        HorizontalLayout formular = new HorizontalLayout(
+                kundenname, fotograf, ort, buchungsdatum, speichernButton
         );
 
-        add(form, grid);
-        refreshGrid();
+        add(formular, grid);
+        aktualisiereGrid();
     }
 
-    private void saveBooking() {
-        Booking booking = new Booking(
-                customerName.getValue(),
-                photographer.getValue(),
-                bookingDate.getValue()
+    private void speichereBuchung()
+    {
+        Booking buchung = new Booking(
+                kundenname.getValue(),
+                fotograf.getValue(),
+                buchungsdatum.getValue()
         );
-        booking.setLocation(location.getValue());
-        service.save(booking);
-        refreshGrid();
-        clearForm();
+        buchung.setLocation(ort.getValue());
+        service.save(buchung);
+        aktualisiereGrid();
+        leereFormular();
     }
 
-    private void refreshGrid() {
+    private void aktualisiereGrid()
+    {
         grid.setItems(service.findAll());
     }
 
-    private void clearForm() {
-        customerName.clear();
-        photographer.clear();
-        location.clear();
-        bookingDate.clear();
+    private void leereFormular()
+    {
+        kundenname.clear();
+        fotograf.clear();
+        ort.clear();
+        buchungsdatum.clear();
     }
 }
