@@ -1,6 +1,7 @@
 # Photography Booking 📸
 
-##Java Abschlussprojekt (Vaadin) + Daten Bank 
+## Web App Abschlussprojekt
+Java + Vaadin Flow + PostgreSQL Datenbank
 
 ### Beschreibung
 Photography Booking ist eine moderne Webanwendung zur Verwaltung von Fotografie-Buchungen.
