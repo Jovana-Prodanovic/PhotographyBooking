@@ -1,6 +1,6 @@
 # Photography Booking 📸
 
-## WMC Abschlussprojekt (Vaadin) Java + Daten Bank 
+##Java Abschlussprojekt (Vaadin) + Daten Bank 
 
 ### Beschreibung
 Photography Booking ist eine moderne Webanwendung zur Verwaltung von Fotografie-Buchungen.
