@@ -1,70 +1,138 @@
 package com.example.booking;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
-@Table(name = "booking")
-public class Booking {
-
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class Booking implements Cloneable
+{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "booking_id")
     private Long id;
-
-    @NotBlank
-    @Column(name = "customer_name", nullable = false)
-    private String customerName = "";
-
-    @NotBlank
-    @Column(name = "photographer", nullable = false)
-    private String photographer = "";
-
-    @Column(name = "location")
-    private String location = "";
-
-    @Column(name = "booking_date")
+    private String customerName;
+    private String photographer;
+    private String location;
     private LocalDate bookingDate;
+    private String status;
 
-    @Column(name = "status")
-    private String status = "Pending";
+    private static final AtomicLong sequence = new AtomicLong(1000);
+    private static final String[] allowedStatuses = {"Pending", "Confirmed", "Cancelled"};
 
-    protected Booking() {}
+    public Booking()
+    {
+    }
 
-    public Booking(String customerName, String photographer, LocalDate bookingDate) {
+    public Booking(String customerName, String photographer, LocalDate bookingDate)
+    {
+        setId();
+        setCustomerName(customerName);
+        setPhotographer(photographer);
+        setBookingDate(bookingDate);
+        setStatus("Pending");
+        setLocation("");
+    }
+
+    public Booking(Long id, String customerName, String photographer, String location, LocalDate bookingDate, String status)
+    {
+        setId(id);
+        setCustomerName(customerName);
+        setPhotographer(photographer);
+        setLocation(location);
+        setBookingDate(bookingDate);
+        setStatus(status);
+    }
+
+    public void setId()
+    {
+        this.id = sequence.getAndIncrement();
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
+    public void setCustomerName(String customerName)
+    {
+        if (customerName == null || customerName.isBlank())
+        {
+            throw new BookingException("Customer name must not be empty");
+        }
+
         this.customerName = customerName;
+    }
+
+    public void setPhotographer(String photographer)
+    {
+        if (photographer == null || photographer.isBlank())
+        {
+            throw new BookingException("Photographer must not be empty");
+        }
+
         this.photographer = photographer;
+    }
+
+    public void setLocation(String location)
+    {
+        if (location == null)
+        {
+            this.location = "";
+        }
+        else
+        {
+            this.location = location;
+        }
+    }
+
+    public void setBookingDate(LocalDate bookingDate)
+    {
+        if (bookingDate == null)
+        {
+            throw new BookingException("Booking date must not be empty");
+        }
+
+        if (bookingDate.isBefore(LocalDate.now()))
+        {
+            throw new BookingException("Booking date must not be in the past");
+        }
+
         this.bookingDate = bookingDate;
     }
 
-    public Long getId() { return id; }
+    public void setStatus(String status)
+    {
+        boolean valid = false;
 
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String n) { this.customerName = n; }
+        for (String s : allowedStatuses)
+        {
+            if (s.equals(status))
+            {
+                valid = true;
+                break;
+            }
+        }
 
-    public String getPhotographer() { return photographer; }
-    public void setPhotographer(String p) { this.photographer = p; }
+        if (valid == false)
+        {
+            throw new BookingException("Status must be: Pending, Confirmed or Cancelled");
+        }
 
-    public String getLocation() { return location; }
-    public void setLocation(String l) { this.location = l; }
-
-    public LocalDate getBookingDate() { return bookingDate; }
-    public void setBookingDate(LocalDate d) { this.bookingDate = d; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String s) { this.status = s; }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null || !getClass().isAssignableFrom(obj.getClass())) return false;
-        if (obj == this) return true;
-        Booking other = (Booking) obj;
-        return getId() != null && getId().equals(other.getId());
+        this.status = status;
     }
 
     @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public Booking clone()
+    {
+        return new Booking(id, customerName, photographer, location, bookingDate, status);
     }
 }
