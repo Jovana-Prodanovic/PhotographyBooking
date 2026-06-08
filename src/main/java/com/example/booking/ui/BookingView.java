@@ -7,8 +7,6 @@ import com.example.booking.BookingService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -18,17 +16,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "booking", layout = MainLayout.class)
 @PageTitle("Bookings")
-public class BookingView extends VerticalLayout {
-
+public class BookingView extends VerticalLayout
+{
     private final Button buttonRemoveAll = new Button("Remove all bookings");
     private final Button buttonAdd10 = new Button("Add 10 bookings");
     private final Button buttonAddWrong = new Button("Add WRONG booking");
 
-    private final Grid<Booking> grid = new Grid<>(Booking.class, false);
+    private final Grid<Booking> grid = new Grid<Booking>(Booking.class, false);
 
     private final BookingService bookingService;
 
-    public BookingView(@Autowired BookingService bookingService) {
+    public BookingView(@Autowired BookingService bookingService)
+    {
         this.bookingService = bookingService;
 
         setSpacing(true);
@@ -39,13 +38,6 @@ public class BookingView extends VerticalLayout {
 
         grid.setSizeFull();
 
-        Image customerIcon = new Image("icons/booking-icon.png", "Customer");
-        customerIcon.setWidth("24px");
-
-        grid.addColumn(Booking::getStatus)
-                .setHeader("Status")
-                .setSortable(true);
-
         grid.addColumn(Booking::getId)
                 .setHeader("ID")
                 .setSortable(true);
@@ -55,7 +47,7 @@ public class BookingView extends VerticalLayout {
                 .setSortable(true);
 
         grid.addColumn(Booking::getCustomerName)
-                .setHeader(new HorizontalLayout(customerIcon, new Span("Customer")))
+                .setHeader("Customer")
                 .setSortable(true);
 
         grid.addColumn(Booking::getPhotographer)
@@ -66,6 +58,10 @@ public class BookingView extends VerticalLayout {
                 .setHeader("Location")
                 .setSortable(true);
 
+        grid.addColumn(Booking::getStatus)
+                .setHeader("Status")
+                .setSortable(true);
+
         grid.addComponentColumn(booking -> {
                     Checkbox cb = new Checkbox("Confirmed".equals(booking.getStatus()));
                     cb.setReadOnly(true);
@@ -74,6 +70,16 @@ public class BookingView extends VerticalLayout {
                 .setHeader("Confirmed")
                 .setSortable(true)
                 .setComparator(booking -> "Confirmed".equals(booking.getStatus()));
+
+        grid.addComponentColumn(booking ->
+                        new Button("Delete", e -> removeSelected(booking.getId())))
+                .setHeader("Delete")
+                .setSortable(false);
+
+        grid.addComponentColumn(booking ->
+                        new Button("One more", e -> oneMoreDay(booking.getId())))
+                .setHeader("One more")
+                .setSortable(false);
 
         buttonRemoveAll.addClickListener(b -> removeAllBookings());
         buttonAdd10.addClickListener(b -> add10Bookings());
@@ -86,28 +92,62 @@ public class BookingView extends VerticalLayout {
         reload();
     }
 
-    private void removeAllBookings() {
+    private void removeAllBookings()
+    {
         bookingService.removeAll();
         buttonRemoveAll.setEnabled(false);
         reload();
     }
 
-    private void add10Bookings() {
+    private void add10Bookings()
+    {
         bookingService.fillTestData(10);
         buttonRemoveAll.setEnabled(true);
         reload();
     }
 
-    private void addWrongBooking() {
-        try {
+    private void addWrongBooking()
+    {
+        try
+        {
             bookingService.addWrongBooking();
             reload();
-        } catch (BookingException e) {
+        }
+        catch (BookingException e)
+        {
             Notification.show(e.getMessage());
         }
     }
 
-    private void reload() {
+    private void removeSelected(Long bookingId)
+    {
+        try
+        {
+            bookingService.removeBooking(bookingId);
+            buttonRemoveAll.setEnabled(!bookingService.findAll().isEmpty());
+            reload();
+        }
+        catch (BookingException e)
+        {
+            Notification.show(e.getMessage());
+        }
+    }
+
+    private void oneMoreDay(Long bookingId)
+    {
+        try
+        {
+            bookingService.oneMoreDay(bookingId);
+            reload();
+        }
+        catch (BookingException e)
+        {
+            Notification.show(e.getMessage());
+        }
+    }
+
+    private void reload()
+    {
         grid.setItems(bookingService.findAll());
     }
 }

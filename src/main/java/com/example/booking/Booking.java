@@ -1,103 +1,103 @@
 package com.example.booking;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
-public class Booking {
-
+public class Booking
+{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Customer name is required")
     private String customerName;
+
+    @NotBlank(message = "Photographer is required")
     private String photographer;
-    private String location;
+
+    @NotNull(message = "Booking date is required")
+    @Future(message = "Booking date must be in the future")
     private LocalDate bookingDate;
+
+    @NotBlank(message = "Location is required")
+    private String location;
+
+    @NotBlank(message = "Status is required")
     private String status;
 
-    private static final AtomicLong sequence = new AtomicLong(1);
-
-    public Booking() {
+    public Booking()
+    {
     }
 
-    public Booking(String customerName, String photographer, LocalDate bookingDate) {
-        setId();
-        setCustomerName(customerName);
-        setPhotographer(photographer);
-        setBookingDate(bookingDate);
-        setLocation("");
-        setStatus("Pending");
+    public Booking(String customerName, String photographer, LocalDate bookingDate)
+    {
+        this.customerName = customerName;
+        this.photographer = photographer;
+        this.bookingDate = bookingDate;
+        this.location = "Wien";
+        this.status = "Pending";
     }
 
-    public Long getId() {
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId() {
-        this.id = sequence.getAndIncrement();
-    }
-
-    public String getCustomerName() {
+    public String getCustomerName()
+    {
         return customerName;
     }
 
-    public void setCustomerName(String customerName) {
-        if (customerName == null || customerName.isBlank()) {
-            throw new BookingException("Customer name must not be empty");
-        }
+    public void setCustomerName(String customerName)
+    {
         this.customerName = customerName;
     }
 
-    public String getPhotographer() {
+    public String getPhotographer()
+    {
         return photographer;
     }
 
-    public void setPhotographer(String photographer) {
-        if (photographer == null || photographer.isBlank()) {
-            throw new BookingException("Photographer must not be empty");
-        }
+    public void setPhotographer(String photographer)
+    {
         this.photographer = photographer;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        if (location == null) {
-            this.location = "";
-        } else {
-            this.location = location;
-        }
-    }
-
-    public LocalDate getBookingDate() {
+    public LocalDate getBookingDate()
+    {
         return bookingDate;
     }
 
-    public void setBookingDate(LocalDate bookingDate) {
-        if (bookingDate == null) {
-            throw new BookingException("Booking date must not be empty");
-        }
-        if (bookingDate.isBefore(LocalDate.now())) {
-            throw new BookingException("Booking date must not be in the past");
-        }
+    public void setBookingDate(LocalDate bookingDate)
+    {
         this.bookingDate = bookingDate;
     }
 
-    public String getStatus() {
+    public String getLocation()
+    {
+        return location;
+    }
+
+    public void setLocation(String location)
+    {
+        this.location = location;
+    }
+
+    public String getStatus()
+    {
         return status;
     }
 
-    public void setStatus(String status) {
-        if (status == null || status.isBlank()) {
-            throw new BookingException("Status must not be empty");
-        }
-        if (!status.equals("Pending") && !status.equals("Confirmed") && !status.equals("Cancelled")) {
-            throw new BookingException("Status must be Pending, Confirmed or Cancelled");
-        }
+    public void setStatus(String status)
+    {
         this.status = status;
     }
 }
