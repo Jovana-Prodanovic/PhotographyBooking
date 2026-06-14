@@ -37,6 +37,7 @@ public class MainLayout extends AppLayout implements AfterNavigationObserver
         );
 
         SideNav nav = new SideNav();
+
         nav.addItem(new SideNavItem("Home", HomeView.class, VaadinIcon.HOME.create()));
         nav.addItem(new SideNavItem("Bookings", BookingView.class, VaadinIcon.CALENDAR.create()));
         nav.addItem(new SideNavItem("Gallery", GalerieView.class, VaadinIcon.PICTURE.create()));
