@@ -53,5 +53,5 @@ docker run --name photographybooking-postgres \
 Jovana Prodanovic —  HTL Spengergasse Wien
 
 ## Mein Anteil
-Umsetzung der Buchungsfunktion und der Benutzeroberfläche mit Vaadin im Rahmen des Kollegs für Informatik.
+Umsetzung der Buchungsfunktion und der Benutzeroberfläche mit Vaadin im Rahmen des Kollegs für Informatik. 
 
