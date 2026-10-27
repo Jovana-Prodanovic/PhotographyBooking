@@ -50,4 +50,8 @@ docker run --name photographybooking-postgres \
 4. Browser öffnen: http://localhost:8080
 
 ### Autorin
-Jovana Prodanovic — 4BKIF — HTL Spengergasse Wien
+Jovana Prodanovic —  HTL Spengergasse Wien
+
+## Mein Anteil
+Umsetzung der Buchungsfunktion und der Benutzeroberfläche mit Vaadin im Rahmen des Kollegs für Informatik.
+
